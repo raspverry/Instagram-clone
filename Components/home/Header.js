@@ -1,10 +1,20 @@
 import React from 'react'
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native'
+import { signOut } from 'firebase/auth'
+import { auth } from '../../firebase'
+
+const handleSignout = () => {
+    signOut(auth).then(() => {
+        console.log('signed out')
+    }).catch((error) => {
+        Alert.alert(error.message)
+    })
+}
 
 const Header = ({navigation}) => {
     return (
         <View style={styles.container}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleSignout}>
                 <Image style={styles.logo} source={require('../../assets/logo.png')} />
             </TouchableOpacity>
             

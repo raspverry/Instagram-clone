@@ -1,18 +1,39 @@
+import { arrayRemove, arrayUnion, updateDoc, doc } from 'firebase/firestore'
 import React from 'react'
 import { TouchableOpacity } from 'react-native'
 import { Image } from 'react-native'
 import { View, Text, StyleSheet } from 'react-native'
 import { Divider } from 'react-native-elements'
+import { auth, db } from '../../firebase'
 
 
 const Post = ({post}) => {
+    const handleLike = async (post) => {
+        const currentLikeStatus = !post.likes_by_users.includes(
+            auth.currentUser.email
+        )
+        await updateDoc(doc(db, 'Users', auth.currentUser.email, 'Posts', post.id),{
+            likes_by_users: currentLikeStatus 
+            ? arrayUnion(auth.currentUser.email)
+                : arrayRemove(auth.currentUser.email)
+        }).then(
+            () => {
+                console.log('updated')
+            }
+        ).catch(
+            (error) => {
+                console.error('error occured: ', error)
+            }
+        )
+    }
+
     return (
         <View style={{ marginBottom: 30 }}>
             <Divider width={1} orientation='vertical' />
             <PostHeader post={post} />
             <PostImage post={post} />
             <View style={{marginHorizontal: 15, marginTop: 10}}>
-                <PostFooter />
+                <PostFooter post={post} handleLike={handleLike} />
                 <Likes post={post} />
                 <Caption post={post}/>
                 <CommentsSection post={post} />
@@ -21,6 +42,7 @@ const Post = ({post}) => {
         </View>
     )
 }
+
 
 const PostHeader = ({post}) => (
     <View style={{ 
@@ -55,27 +77,30 @@ const PostImage = ({post}) => (
 const postFooterIcons = [
     {
         name: 'Like',
-        imageurl: 'https://img.icons8.com/external-flatart-icons-outline-flatarticons/64/000000/external-like-instagram-flatart-icons-outline-flatarticons.png',
+        imageurl: 'https://img.icons8.com/external-flatart-icons-outline-flatarticons/64/ffffff/external-like-instagram-flatart-icons-outline-flatarticons.png',
         likedImageurl: 'https://img.icons8.com/external-flatart-icons-outline-flatarticons/64/ff0000/external-like-instagram-flatart-icons-outline-flatarticons.png'
     },
     {
         name: 'Comment',
-        imageurl: 'https://img.icons8.com/external-flatart-icons-outline-flatarticons/64/000000/external-chat-instagram-flatart-icons-outline-flatarticons.png'
+        imageurl: 'https://img.icons8.com/external-flatart-icons-outline-flatarticons/64/ffffff/external-chat-instagram-flatart-icons-outline-flatarticons.png'
     },
     {
         name: 'Share',
-        imageurl: 'https://img.icons8.com/external-flatart-icons-outline-flatarticons/64/000000/external-send-instagram-flatart-icons-outline-flatarticons.png'
+        imageurl: 'https://img.icons8.com/external-flatart-icons-outline-flatarticons/64/ffffff/external-send-instagram-flatart-icons-outline-flatarticons.png'
     },
     {
         name: 'Save',
-        imageurl: 'https://img.icons8.com/external-flatart-icons-outline-flatarticons/64/000000/external-bookmark-instagram-flatart-icons-outline-flatarticons.png'
+        imageurl: 'https://img.icons8.com/external-flatart-icons-outline-flatarticons/64/ffffff/external-bookmark-instagram-flatart-icons-outline-flatarticons.png'
     }
 ]
 
-const PostFooter = () => (
+const PostFooter = ({handleLike, post}) => (
     <View style={{flexDirection: 'row' }}>
         <View style={styles.LeftFooterIconsContainer}>
-            <Icon imgStyle={styles.footerIcon} imgUrl={postFooterIcons[0].imageurl} />
+            <TouchableOpacity onPress={() => handleLike(post)}>
+                <Image style={styles.footerIcon} source={{uri: post.likes_by_users.includes(auth.currentUser.email)
+                    ? postFooterIcons[0].likedImageurl : postFooterIcons[0].imageurl}} />
+            </TouchableOpacity>
             <Icon imgStyle={styles.footerIcon} imgUrl={postFooterIcons[1].imageurl} />
             <Icon imgStyle={styles.footerIcon} imgUrl={postFooterIcons[2].imageurl} />
         </View>
@@ -93,7 +118,7 @@ const Icon = ({imgStyle, imgUrl}) => (
 
 const Likes = ({post}) => (
     <View style={{flexDirection: 'row', marginTop: 4}}>
-        <Text style={{color: 'white', fontWeight: '600'}}>{post.likes.toLocaleString('en')} Likes</Text>
+        <Text style={{color: 'white', fontWeight: '600'}}>{post.likes_by_users.length.toLocaleString('en')} Likes</Text>
     </View>
 )
 
@@ -142,7 +167,7 @@ const styles = StyleSheet.create({
     footerIcon: {
         width: 33, 
         height: 33,
-        tintColor: 'white'
+        //tintColor: 'white'
     },
     LeftFooterIconsContainer:{
         flexDirection: 'row',

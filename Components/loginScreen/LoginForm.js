@@ -7,7 +7,8 @@ import { View, Text, Alert } from 'react-native'
 import {Formik} from 'formik'
 import * as Yup from 'yup'
 import Validator from 'email-validator'
-import firebase from '../../firebase'
+import {auth} from '../../firebase'
+import {getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 
 const LoginFormSchema = Yup.object().shape({
     email: Yup.string().email().required('An email is required'),
@@ -17,12 +18,25 @@ const LoginFormSchema = Yup.object().shape({
 })
 
 const onLogin = async (email, password) => {
+    /*
     try{
-        //await firebase.auth().signInWithEmailAndPassword(email, password)
-        console.log('login successful', email, password)
+        await signInWithEmailAndPassword(auth, email, password).then(
+            console.log('login successful', email, password)
+        )
     } catch(error){
+        console.log('e')
         Alert.alert(error.message)
     }
+    */
+   await signInWithEmailAndPassword(auth, email, password)
+   .then(
+        (userCredential) => {
+            console.log('login successful', email, password, userCredential.user.email)
+        }
+    )
+    .catch((error) => {
+        Alert.alert(error.message)
+    })
 }
 
 const LoginForm = ({navigation}) => {
@@ -31,7 +45,7 @@ const LoginForm = ({navigation}) => {
             <Formik
                 initialValues={{email: '', password: ''}}
                 onSubmit={(values) => {
-                    //console.log(values)
+                    //onsole.log(values)
                     onLogin(values.email, values.password)
                 }}
                 validationSchema={LoginFormSchema}

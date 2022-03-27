@@ -1,7 +1,8 @@
 import * as React from 'react';
-import SignedInStack from './navigation';
+import SignupScreen from './Screens/SignupScreen';
+import AuthNavigation from './AuthNavigation'
 
 export default function App() {
-  return <SignedInStack />
+  return <AuthNavigation />
 }
 
