@@ -26,4 +26,4 @@ LoginScreen
 
 SignupScreen
 
-<img width=400 height=700 src='https://user-images.githubusercontent.com/71434298/160276614-b94bb172-8383-48b1-a148-556f589e7690.pngg'/>
+<img width=400 height=700 src='https://user-images.githubusercontent.com/71434298/160276614-b94bb172-8383-48b1-a148-556f589e7690.png'/>
