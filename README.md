@@ -2,13 +2,16 @@
 
 This application is a simple mock up of Instagram, based on tutorial on Youtube https://www.youtube.com/watch?v=UbixZZDjrdU&ab_channel=CleverProgrammer
 
-**What implemented
+Frontend UI was created by React Native with Formik and Yup, and Backend was created with Firebase V9.
+The tutorial on Youtube was using Firebase V8 which has different format of code, therefore, I changed and adjusted it to V9.
+
+**What implemented**
 - Sign up, Sign in, Sign Out (Click instagram logo in HomeScreen)
 - Upload a new post
 - Realtime display posts
 - Like button
 
-**Not implemented but interactive
+**Not implemented but interactive**
 - Task bar (Home, Search... icons)
 - Stories 
 
